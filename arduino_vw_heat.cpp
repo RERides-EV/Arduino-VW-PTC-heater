@@ -19,15 +19,24 @@
 
 This code is in the Public Domain
 */
-
 #include "arduino_vw_heat.h"
+
+// Struct to hold the thresholds for potentiometer stages
+struct Thresholds {
+  const int stage0 = 8;   // 0-7: 0 elements on
+  const int stage1 = 400; // 8-399: 1 element on
+  const int stage2 = 930; // 400-929: 2 elements on
+  const int stage3 = 1023; // 930-1023: 3 elements on
+} thresholds;
+
+// Struct to hold the potentiometer calibration values (3.3V in FrontiEV)
+struct PotentiometerRange {
+  const int min = 0;   // Minimum potentiometer value
+  const int max = 425; // Maximum potentiometer value
+} potRange;
 
 // Global variable to store the last stage
 int lastStage = -1; // Initialize to an invalid stage (-1) to ensure the relays are set on the first run
-
-// Define the actual range of the potentiometer. These values are for FrontiEV build by RERides
-const int minValue = 0; // Replace with the actual minimum value
-const int maxValue = 608; // Replace with the actual maximum value
 
 // Initializes the heater system
 void initializeVWHeater(int relay1Pin, int relay2Pin, int relay3Pin) {
@@ -39,21 +48,29 @@ void initializeVWHeater(int relay1Pin, int relay2Pin, int relay3Pin) {
   pinMode(relay2Pin, OUTPUT);
   pinMode(relay3Pin, OUTPUT);
 
-  // Ensure all relays are off initially
-  digitalWrite(relay1Pin, HIGH); // Relays are active LOW
+  // Ensure all relays are off initially (active LOW)
+  digitalWrite(relay1Pin, HIGH);
   digitalWrite(relay2Pin, HIGH);
   digitalWrite(relay3Pin, HIGH);
 
   Serial.println("VW Heater system initialized. Waiting for potentiometer input...");
 }
 
+// Helper function to determine the stage based on the potentiometer value
+static int getStage(int potValue) {
+  if (potValue < thresholds.stage0) return 0; // Stage 0: All elements off
+  if (potValue < thresholds.stage1) return 1; // Stage 1: 1 element on
+  if (potValue < thresholds.stage2) return 2; // Stage 2: 2 elements on
+  return 3;                                   // Stage 3: 3 elements on
+}
+
 // Reads the potentiometer and controls the relays
-void controlVWHeater(int potPin, int relay1Pin, int relay2Pin, int relay3Pin) {
-// Read the potentiometer value
+void updateVWHeater(int potPin, int relay1Pin, int relay2Pin, int relay3Pin) {
+  // Read the potentiometer value
   int rawPotValue = analogRead(potPin);
 
   // Map the raw potentiometer value to the full range (0 to 1023)
-  int potValue = map(rawPotValue, minValue, maxValue, 0, 1023);
+  int potValue = map(rawPotValue, potRange.min, potRange.max, 0, 1023);
 
   // Constrain the mapped value to ensure it stays within 0 to 1023
   potValue = constrain(potValue, 0, 1023);
@@ -64,17 +81,8 @@ void controlVWHeater(int potPin, int relay1Pin, int relay2Pin, int relay3Pin) {
   Serial.print(" | Mapped Potentiometer Value: ");
   Serial.println(potValue);
 
-  // Determine the stage based on the potentiometer value
-  int currentStage;
-  if (potValue < STAGE_0_THRESHOLD) {
-    currentStage = 0; // Stage 0: All elements off
-  } else if (potValue < STAGE_1_THRESHOLD) {
-    currentStage = 1; // Stage 1: 1 element on
-  } else if (potValue < STAGE_2_THRESHOLD) {
-    currentStage = 2; // Stage 2: 2 elements on
-  } else {
-    currentStage = 3; // Stage 3: 3 elements on
-  }
+  // Determine the current stage
+  int currentStage = getStage(potValue);
 
   // Only update the relays if the stage has changed
   if (currentStage != lastStage) {
@@ -83,7 +91,7 @@ void controlVWHeater(int potPin, int relay1Pin, int relay2Pin, int relay3Pin) {
   }
 
   // Small delay to stabilize readings
-  delay(100);
+  delay(200);
 }
 
 // Sets the relays based on the stage
