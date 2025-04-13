@@ -20,8 +20,8 @@
 This code is in the Public Domain
 */
 
-/* The following variables need to be assigned pins
-const int POTENTIOMETER_PIN = A0; // Analog pin for the potentiometer
+/* The proper pins need to be assigned in the INO file. This is an example.
+const int POTENTIOMETER_PIN = A0;       // Analog pin for the potentiometer
 const int RELAY_CHANNEL1_PIN = 5;       // Relay 1 connected to digital pin 5
 const int RELAY_CHANNEL2_PIN = 6;       // Relay 2 connected to digital pin 6
 const int RELAY_CHANNEL3_PIN = 7;       // Relay 3 connected to digital pin 7
@@ -32,15 +32,9 @@ const int RELAY_CHANNEL3_PIN = 7;       // Relay 3 connected to digital pin 7
 
 #include <Arduino.h>
 
-// Thresholds for potentiometer stages
-#define STAGE_0_THRESHOLD 8  // 0-8: 0 elements on
-#define STAGE_1_THRESHOLD 400  // 9-400: 1 element on
-#define STAGE_2_THRESHOLD 923  // 512-922: 2 elements on
-#define STAGE_3_THRESHOLD 1023 // 923-1023: 3 elements on
-
 // Function declarations
 void initializeVWHeater(int relay1Pin, int relay2Pin, int relay3Pin); // Initializes the heater system
-void controlVWHeater(int potPin, int relay1Pin, int relay2Pin, int relay3Pin); // Reads the potentiometer and controls the relays
+void updateVWHeater(int potPin, int relay1Pin, int relay2Pin, int relay3Pin); // Reads the potentiometer and controls the relays
 void setRelays(int stage, int relay1Pin, int relay2Pin, int relay3Pin); // Sets the relays based on the stage
 
 #endif // ARDUINO_VW_HEAT_H
