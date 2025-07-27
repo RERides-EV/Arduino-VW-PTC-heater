@@ -19,20 +19,23 @@
 
 This code is in the Public Domain
 */
+
+// Last tested 6/22/25 in FrontiEV
+
 #include "arduino_vw_heat.h"
 
 // Struct to hold the thresholds for potentiometer stages
 struct Thresholds {
-  const int stage0 = 8;   // 0-7: 0 elements on
-  const int stage1 = 400; // 8-399: 1 element on
-  const int stage2 = 930; // 400-929: 2 elements on
-  const int stage3 = 1023; // 930-1023: 3 elements on
+  const int stage0 = 160;   // 0-159: 0 elements on
+  const int stage1 = 400; // 160-399: 1 element on
+  const int stage2 = 785; // 400-784: 2 elements on
+  const int stage3 = 1023; // 785-1023: 3 elements on
 } thresholds;
 
-// Struct to hold the potentiometer calibration values (3.3V in FrontiEV)
+// Struct to hold the potentiometer calibration values (3.3V in FrontiEV). Current pot values need correcting and thresholds reestablished.
 struct PotentiometerRange {
-  const int min = 0;   // Minimum potentiometer value
-  const int max = 425; // Maximum potentiometer value
+  const int min = 653;   // Minimum potentiometer value
+  const int max = 679; // Maximum potentiometer value
 } potRange;
 
 // Global variable to store the last stage
