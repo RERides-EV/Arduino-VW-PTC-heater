@@ -23,9 +23,9 @@ A header file might be better, but right now pins are being assigned in the main
 #include "arduino_vw_heat.h"
 
 const int POTENTIOMETER_PIN = A0; // Analog pin for the potentiometer
-const int RELAY_CHANNEL1_PIN = 5;       // Relay 1 connected to digital pin 5
-const int RELAY_CHANNEL2_PIN = 6;       // Relay 2 connected to digital pin 6
-const int RELAY_CHANNEL3_PIN = 7;       // Relay 3 connected to digital pin 7
+const int RELAY_CHANNEL1_PIN = 10;       // Relay 1 connected to digital pin 10
+const int RELAY_CHANNEL2_PIN = 11;       // Relay 2 connected to digital pin 11
+const int RELAY_CHANNEL3_PIN = 12;       // Relay 3 connected to digital pin 12
 
 void setup() {
   // Initialize the heater system with the defined pins
